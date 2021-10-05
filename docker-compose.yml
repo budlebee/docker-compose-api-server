@@ -1,0 +1,29 @@
+services:
+  pg:
+    image: postgres:13
+    restart: always
+    volumes:
+      - "./postgresql/data:/var/lib/postgresql/data"
+      - "./init/:/docker-entrypoint-initdb.d/"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "postgres"
+      TZ: "Asia/Seoul"
+  node:
+    image: "node:14"
+    working_dir: /usr/src/app
+    environment:
+      DB_USER: postgres
+      DB_PWD: password
+      DB_TYPE: postgres
+      DB_HOST: pg
+      DB_PORT: 5432
+      DB_NAME: postgres
+    volumes:
+      - ./src:/usr/src/app
+    ports:
+      - "8000:8000"
+    command: bash -c "npm install && npm start"
